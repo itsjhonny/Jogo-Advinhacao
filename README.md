@@ -1,8 +1,10 @@
 ## Descrição
 Jogo de advinhação para ser jogado em grupo
+http://jpguimaraes.com/Jogo-Advinhacao/
 
 ## Status
 O jogo ainda se encontra em desenvolvimento
+Atualmente possui o modo de advinhar pessoas (Cantores Famosos) e músicas
 
 
 ### Futuras Atualizações
