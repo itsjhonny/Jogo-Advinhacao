@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="manifest" href="manifest.json">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+  <!-- Contact Form JavaScript -->
+  <script src="js/jqBootstrapValidation.js"></script>
+  <script src="js/contact_me.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/freelancer.min.js"></script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>João Pedro Guimarães</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+    type="text/css">
+
+  <!-- Plugin CSS -->
+  <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
+
+  <!-- Custom styles for this template -->
+  <link href="css/freelancer.min.css" rel="stylesheet">
+
+</head>
+
+<script>
+
+  let nomes = ["Anitta", "Gusttavo Lima", "Lady Gaga", 
+              "Bruno Mars", "Katy Perry", "Rihanna", "Justin Bieber", 
+              "Roberto Carlos", "Miley Cyrus", "Elton John", "Ivete Sangalo"];
+
+  let musicas = ["http://www.acervoespirita.com.br/anexos/mp3/356-356.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/357-357.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/4133-4133.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/328-328.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/315-315.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/1695-1695.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/722-722.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/865-865.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/409-409.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/276-276.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/217-217.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/852-852.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/861-861.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/856-856.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/854-854.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/1682-1682.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/2669-2669.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/3075-3075.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/3074-3074.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/1676-1676.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/1680-1680.mp3", 
+                "http://www.acervoespirita.com.br/anexos/mp3/3913-3913.mp3"];
+
+  let array_sorteio = [];
+
+  let pontuacao = 0;
+  let isRun = true;
+  let ja_foi = [];
+  let timer;
+  let time_jogo = 60;
+  let time_sorteio;
+
+  let modo_jogo;
+  let audioElement;
+
+  $(document).ready(function () {
+
+    $("#botoes_acertos").hide();
+    $("#modo_escolha_jogo").hide();
+
+    $("#bt_jogar").click(function () {
+      $("#frase_principal").text("Escolha uma das opções");
+      $("#modo_escolha_jogo").show();
+
+
+    });
+
+    $("#bt_escolha_pessoas").click(function () {
+      array_sorteio = nomes;
+      time_sorteio = 10000;
+
+      $("#modo_escolha_jogo").hide();
+      $("#frase_principal").text("Se prepare!");
+
+      setTimeout(count_regressiva, 2000);
+
+    });
+
+    $("#bt_escolha_musica").click(function () {
+      time_jogo = 180;
+      time_sorteio = 30000;
+      array_sorteio = musicas;
+      audioElement = document.createElement('audio');
+
+      $("#modo_escolha_jogo").hide();
+      $("#frase_principal").text("Se prepare!");
+
+      setTimeout(count_regressiva, 2000);
+
+    });
+
+
+    $("#bt_acertou").click(function () {
+      if (pontuacao < array_sorteio.length - 1) {
+
+        pontuacao++;
+        $("#jogador_pontuacao").text("Pontuação: " + pontuacao);
+        sorteio();
+
+      }
+
+      else {
+        win();
+      }
+
+    });
+
+    $("#bt_errou").click(function () {
+      sorteio();
+
+    });
+
+  });
+
+
+  function count_regressiva() {
+    let timeleft = 5;
+    let downloadTimer = setInterval(function () {
+
+      timeleft--;
+      $("#frase_principal").text(timeleft);
+
+      if (timeleft <= 0) {
+        clearInterval(downloadTimer);
+        pontuacao = 0;
+        start_jogo();
+
+      }
+
+    }, 1000);
+
+  }
+
+  function start_jogo() {
+    isRun = true;
+    ja_foi = [];
+    sorteio();
+    tempo_jogo();
+
+    $("#bt_jogar").text("");
+    $("#jogador_pontuacao").text("Pontuação: " + pontuacao);
+    $("#botoes_acertos").show();
+
+  }
+
+  function win() {
+    isRun = false;
+
+    $("#frase_principal").text("Você Venceu! :D");
+    $("#bt_jogar").text("Jogar");
+    $("#botoes_acertos").hide();
+  }
+
+  function lose() {
+    isRun = false;
+    $("#bt_jogar").text("Jogar");
+    $("#botoes_acertos").hide();
+
+
+    if (array_sorteio == musicas) {
+      audioElement.pause();
+    }
+
+  }
+
+  function sorteio() {
+    if (isRun) {
+
+      var x = array_sorteio[Math.ceil(Math.random() * (array_sorteio.length - 1))];
+
+      if (ja_foi.indexOf(x) > -1) {
+        sorteio();
+
+      }
+
+      else {
+
+        if (array_sorteio == nomes) {
+          $("#frase_principal").text(x);
+        }
+
+        else if (array_sorteio == musicas) {
+          audioElement.pause();
+          $("#frase_principal").text("♪♫♬");
+          audioElement.setAttribute('src', x);
+          audioElement.play();
+
+        }
+
+        ja_foi.push(x);
+        clearTimeout(timer);
+
+        timer = setTimeout(function () {
+          sorteio();
+        }, time_sorteio);
+
+      }
+
+    }
+
+  }
+
+  function tempo_jogo() {
+
+    var downloadTimer = setInterval(function () {
+      time_jogo--;
+
+      if (time_jogo <= 0 || array_sorteio.length <= ja_foi.length) {
+        $("#frase_principal").text("Acabou o tempo");
+        lose();
+        clearInterval(downloadTimer);
+
+      }
+
+    }, 1000);
+
+  }
+
+
+
+</script>
+
+<body id="page-top">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+    <div class="container">
+
+      <a class="navbar-brand js-scroll-trigger" style="margin-left: 0rem;" id="bt_jogar">Jogar</a>
+      <a class="navbar-brand js-scroll-trigger" id="tempo_jogo"></a>
+      <a class="navbar-brand js-scroll-trigger" id="jogador_pontuacao"></a>
+
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="masthead bg-primary text-white text-center">
+    <div class="container" id="container-gamer">
+
+      <h2 class="font-weight-light mb-0" id="frase_principal">Vamos Jogar! :D</h2>
+      <hr class="star-light">
+      <ul class="list-inline mb-0">
+
+
+        <li class="list-inline-item" id="modo_escolha_jogo">
+          <a class="btn btn-outline-light btn-social text-center rounded-circle" id="bt_escolha_pessoas"
+            style="margin-right: 5rem;">
+            <i class="fas fa-users"></i>
+          </a>
+
+          <a class="btn btn-outline-light btn-social text-center rounded-circle" id="bt_escolha_musica">
+            <i class="fas fa-music"></i>
+          </a>
+
+        </li>
+
+        <li class="list-inline-item" id="botoes_acertos">
+          <a class="btn btn-outline-light btn-social text-center rounded-circle" id="bt_errou"
+            style="margin-right: 15rem;">
+            <i class="fa fa-times"></i>
+          </a>
+
+
+          <a class="btn btn-outline-light btn-social text-center rounded-circle" id="bt_acertou">
+            <i class="fas fa-check"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="copyright py-4 text-center text-white">
+    <div class="container">
+      <small>Developer by: &copy; João Pedro Guimarães 2019</small>
+    </div>
+  </div>
+
+  <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+  <div class="scroll-to-top d-lg-none position-fixed ">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+      <i class="fa fa-chevron-up"></i>
+    </a>
+  </div>
+</body>
+
+</html>
